@@ -25,7 +25,7 @@ RELEASE_URL=$(curl -s ${LATEST_RELEASES} | grep browser_download_url | grep ${DI
 #trap 'rm -f "${TMP_FILE}"' EXIT
 TMP_FILE=$(mktemp) || exit 1
 
-curl -s -L ${RELEASE_URL} -o ${TMP_FILE} 
+curl -s -q -L ${RELEASE_URL} -o ${TMP_FILE} 
 chmod a+x ${TMP_FILE}
 
 echo "Run traitor: ${TMP_FILE} -a"
