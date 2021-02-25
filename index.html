@@ -1,3 +1,31 @@
 #!/bin/bash
 
-echo 'Hello traitor'
+GITHUB_REPO=liamg/traitor
+LATEST_RELEASES=https://api.github.com/repos/${GITHUB_REPO}/releases/latest
+ARCH=$(uname -m)
+
+case ${ARCH} in 
+    x86_64 | amd64)
+        DIST="amd64"
+    ;;
+    arm64 | aarch64)
+        DIST="arm64"
+    ;;  
+    i386 | i686)
+        DIST="386"
+    ;;
+    *)
+        echo -n "Unknown arch ${ARCH}, exit..."
+        exit 1
+    ;;
+esac
+
+RELEASE_URL=$(curl -s ${LATEST_RELEASES} | grep browser_download_url | grep ${DIST} | cut -d '"' -f 4)
+
+#trap 'rm -f "${TMP_FILE}"' EXIT
+TMP_FILE=$(mktemp) || exit 1
+
+curl -L ${RELEASE_URL} -o ${TMP_FILE} 
+chmod a+x ${TMP_FILE}
+
+echo "Run traitor: ${TMP_FILE} -a"
